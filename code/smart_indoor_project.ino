@@ -105,30 +105,38 @@ void loop() {
     voneClient.publishTelemetryData(MQ2sensorID, payloadObject);
 
     // Trigger alerts for unsafe conditions
-    String alertMsg = "";
-    if (gasValue > GAS_THRESHOLD) {
-      alertMsg += "High gas levels detected. ";
-    }
-    if (humidity < HUMIDITY_MIN_THRESHOLD || humidity > HUMIDITY_MAX_THRESHOLD) {
-      alertMsg += "Unsafe humidity levels. ";
-    }
-    if (temperature > TEMPERATURE_THRESHOLD) {
-      alertMsg += "High temperature detected. ";
-    }
-
-    // Trigger alerts for unsafe conditions
     if (gasValue > GAS_THRESHOLD || humidity < HUMIDITY_MIN_THRESHOLD || humidity > HUMIDITY_MAX_THRESHOLD || temperature > TEMPERATURE_THRESHOLD) {
-
       sensorInterval = 300000;         // Switch to 5 minutes in unsafe conditions
       digitalWrite(redLedPin, HIGH);   // Turn on Red LED
       digitalWrite(greenLedPin, LOW);  // Turn off Green LED
-      voneClient.publishDeviceStatusEvent(DHT11sensorID, false, alertMsg.c_str());
-      voneClient.publishDeviceStatusEvent(MQ2sensorID, false, alertMsg.c_str());
+
+      // Publish alert with status still 'true' (no disconnection)
+      String alertMsg = "";
+      if (gasValue > GAS_THRESHOLD) {
+        alertMsg += "High gas levels detected. ";
+      }
+      if (humidity < HUMIDITY_MIN_THRESHOLD) {
+        alertMsg += "Humidity too low. ";
+      }
+      if (humidity > HUMIDITY_MAX_THRESHOLD) {
+        alertMsg += "Humidity too high. ";
+      }
+      if (temperature > TEMPERATURE_THRESHOLD) {
+        alertMsg += "High temperature detected. ";
+      }
+
+      // Send alert message without disconnecting the sensor
+      voneClient.publishDeviceStatusEvent(DHT11sensorID, true, alertMsg.c_str());
+      voneClient.publishDeviceStatusEvent(MQ2sensorID, true, alertMsg.c_str());
     } else {
       // Safe conditions
       sensorInterval = 900000;          // Switch back to 15 minutes in safe conditions
       digitalWrite(redLedPin, LOW);     // Turn off Red LED
       digitalWrite(greenLedPin, HIGH);  // Turn on Green LED
+
+      // Send normal status (true)
+      voneClient.publishDeviceStatusEvent(DHT11sensorID, true);
+      voneClient.publishDeviceStatusEvent(MQ2sensorID, true);
     }
   }
 }
