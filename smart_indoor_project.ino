@@ -86,7 +86,7 @@ void loop() {
 
     // Read data from DHT11
     float humidity = dht.readHumidity();
-    float temperature = dht.readTemperature();
+    int temperature = dht.readTemperature();
 
     // Read data from MQ2
     int gasValue = analogRead(mq2Pin);
@@ -108,14 +108,14 @@ void loop() {
     if (gasValue > GAS_THRESHOLD || humidity < HUMIDITY_MIN_THRESHOLD || humidity > HUMIDITY_MAX_THRESHOLD || temperature > TEMPERATURE_THRESHOLD) {
       
       String alertMsg = "Unsafe air quality detected!";
-      sensorInterval = 300000;               // Switch to 5 minutes in unsafe conditions
+      sensorInterval = 300000;         // Switch to 5 minutes in unsafe conditions
       digitalWrite(redLedPin, HIGH);   // Turn on Red LED
       digitalWrite(greenLedPin, LOW);  // Turn off Green LED
       voneClient.publishDeviceStatusEvent(DHT11sensorID, false, alertMsg.c_str());
       voneClient.publishDeviceStatusEvent(MQ2sensorID, false, alertMsg.c_str());
     } else {
       // Safe conditions 
-      sensorInterval = 900000;                // Switch back to 15 minutes in safe conditions
+      sensorInterval = 900000;          // Switch back to 15 minutes in safe conditions
       digitalWrite(redLedPin, LOW);     // Turn off Red LED
       digitalWrite(greenLedPin, HIGH);  // Turn on Green LED
     }
