@@ -15,6 +15,7 @@ const int dht11Pin = 42;    // Right side Maker Port
 const int mq2Pin = 4;       // Analog pin for MQ2 gas sensor (connect to a suitable analog pin)
 const int redLedPin = 9;    // Digital pin connected to the Red LED
 const int greenLedPin = 5;  // Digital pin connected to the Green LED
+const int buzzerPin = 12;   // Built-in buzzer pin
 
 // Threshold value
 const float HUMIDITY_MAX_THRESHOLD = 80.0;  // Maximum acceptable humidity
@@ -36,7 +37,7 @@ unsigned long lastMsgTime = 0;
 void setup_wifi() {
   delay(10);
 
-  //connect to wifi
+  // Connect to Wi-Fi
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(WIFI_SSID);
@@ -65,11 +66,13 @@ void setup() {
   // Initialize sensors
   dht.begin();
   pinMode(mq2Pin, INPUT);
-  pinMode(redLedPin, OUTPUT);  // Set Red LED as output
+  pinMode(redLedPin, OUTPUT);
   pinMode(greenLedPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
 }
 
 void loop() {
+
   // Reconnect to MQTT broker if disconnected
   if (!voneClient.connected()) {
     voneClient.reconnect();
@@ -77,10 +80,13 @@ void loop() {
     voneClient.publishDeviceStatusEvent(DHT11sensorID, true);
     voneClient.publishDeviceStatusEvent(MQ2sensorID, true);
   }
+
   voneClient.loop();
 
   // Read and send sensor data at regular intervals
   unsigned long cur = millis();
+  unsigned long lastBuzzerTime = 0;             // Track the last buzzer activation
+  const unsigned long buzzerCooldown = 300000;  // Cooldown period (5 minutes)
   if (cur - lastMsgTime > sensorInterval) {
     lastMsgTime = cur;
 
@@ -106,9 +112,16 @@ void loop() {
 
     // Trigger alerts for unsafe conditions
     if (gasValue > GAS_THRESHOLD || humidity < HUMIDITY_MIN_THRESHOLD || humidity > HUMIDITY_MAX_THRESHOLD || temperature > TEMPERATURE_THRESHOLD) {
-      sensorInterval = 300000;         // Switch to 5 minutes in unsafe conditions
+      sensorInterval = 300000;         // Switch to 1 minutes in unsafe conditions (300000 - 5 mins)
       digitalWrite(redLedPin, HIGH);   // Turn on Red LED
       digitalWrite(greenLedPin, LOW);  // Turn off Green LED
+
+      if ((millis() - lastBuzzerTime > buzzerCooldown) && (gasValue > GAS_THRESHOLD || humidity < HUMIDITY_MIN_THRESHOLD || humidity > HUMIDITY_MAX_THRESHOLD || temperature > TEMPERATURE_THRESHOLD)) {
+        lastBuzzerTime = millis();  // Update the last buzzer activation time
+        tone(buzzerPin, 2000);      // Activate buzzer at 2kHz
+        delay(2000);                // Buzzer sounds for 2 seconds
+        noTone(buzzerPin);          // Turn off buzzer
+      }
 
       // Publish alert with status still 'true' (no disconnection)
       String alertMsg = "";
@@ -129,10 +142,12 @@ void loop() {
       voneClient.publishDeviceStatusEvent(DHT11sensorID, true, alertMsg.c_str());
       voneClient.publishDeviceStatusEvent(MQ2sensorID, true, alertMsg.c_str());
     } else {
+
       // Safe conditions
       sensorInterval = 900000;          // Switch back to 15 minutes in safe conditions
       digitalWrite(redLedPin, LOW);     // Turn off Red LED
       digitalWrite(greenLedPin, HIGH);  // Turn on Green LED
+      noTone(buzzerPin);                // Ensure buzzer is off
 
       // Send normal status (true)
       voneClient.publishDeviceStatusEvent(DHT11sensorID, true);
