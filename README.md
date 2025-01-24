@@ -19,6 +19,9 @@ The sensors used in this system are:
 The actuators used in this system are:
   1. Onboard buzzer
   2. Red and Yellow LED
+  3. Optocupler relay module
+  4. Shaftmotor with propeller
+  5. Push button 
 
 ## The workflow
   1. The sensor will read the data from the surrounding and send to V-One platform for data processing.
