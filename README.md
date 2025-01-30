@@ -1,5 +1,5 @@
 # Smart Indoor Air Quality Monitoring and Alert System
-A simple Smart Indoor Air Quality Monitoring and Alert System where it will monitor the surrounding and alert the people by lighten up the red LED. 
+A simple Smart Indoor Air Quality Monitoring and Alert System where it will monitor the surrounding and alert the people based on the data gathered by the system. 
 
 ## Group members
   1. Nurul Najwa binti Mat Aris (158560)
