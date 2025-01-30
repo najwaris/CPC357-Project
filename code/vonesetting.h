@@ -9,7 +9,7 @@
 
 #define MQTT_SERVER "mqtt.v-one.my"
 #define MQTT_PORT 8883
-#define MQTT_USERNAME "yourGatewayToke"  //Replace this with the Access Token of YOUR gateway
+#define MQTT_USERNAME "yourGatewayToken"  //Replace this with the Access Token of YOUR gateway
 #define MQTT_PASSWORD " "
 
 #define GATEWAYID "yourGatewayID"  //Replace this with the gatewayID of your gateway 
