@@ -7,10 +7,10 @@ Smart Indoor Air Quality Monitoring and Alert System
 #define DHTTYPE DHT11
 
 // Define device IDs (replace with YOUR device IDs from V-One Cloud)
-const char* DHT11sensorID = "a8b1d1d4-ffca-4ce1-b251-39c2ee5ddc57";    // Replace with the device ID for the DHT11 sensor
-const char* MQ2sensorID = "19135568-a0d3-482b-95f6-9aeede887e77";      // Replace with the device ID for the MQ2 sensor
-const char* RelayActuatorID = "cd8c006f-f8a5-4017-933f-733761a273d3";  // Replace with the device ID for the Relay actuator
-const char* ButtonID = "94c83ecd-df3f-4607-a3f8-d6e423c54b1c";
+const char* DHT11sensorID = "a8b1d1d4-ffca-4ce1-b251-39c2ee5ddc57";    // Device ID for the DHT11 sensor
+const char* MQ2sensorID = "19135568-a0d3-482b-95f6-9aeede887e77";      // Device ID for the MQ2 sensor
+const char* RelayActuatorID = "027d42af-8ac1-4cf8-914a-0f6a7ebdc2b1";  // Device ID for the Relay actuator
+const char* ButtonID = "94c83ecd-df3f-4607-a3f8-d6e423c54b1c";         // Device ID for the Push Button
 
 // Used Pins
 const int dht11Pin = 42;    // Right side Maker Port
@@ -91,11 +91,11 @@ void setup() {
   pinMode(relayPin, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);  // External button with pull-up resistor
 
-  // Set initial states
+  // Set initial states: all are OFF at startup
   digitalWrite(redLedPin, LOW);
   digitalWrite(greenLedPin, LOW);
   digitalWrite(buzzerPin, LOW);
-  digitalWrite(relayPin, false);  // Ensure propeller is OFF at startup
+  digitalWrite(relayPin, false);
 }
 
 void loop() {
@@ -211,12 +211,14 @@ void loop() {
         digitalWrite(relayPin, false);
         propellerActive = false;
       }
+
       // Send normal status (true)
       voneClient.publishDeviceStatusEvent(DHT11sensorID, true);
       voneClient.publishDeviceStatusEvent(MQ2sensorID, true);
       voneClient.publishDeviceStatusEvent(RelayActuatorID, false);
     }
   }
+
   // Turn off propeller manually
   if (!digitalRead(buttonPin) && propellerActive) {
     digitalWrite(relayPin, false);
