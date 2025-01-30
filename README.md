@@ -26,8 +26,10 @@ The actuators used in this system are:
 ## The workflow
   1. The sensor will read the data from the surrounding and send to V-One platform for data processing.
   2. If the data pass the threshold set by the system, there are two different reactions from the system to indicate it's dangerous:
+
      a. humidity above 80: red LED will lights up, the buzzer will turn on for 2 seconds
+
      b. the other threshold: red LED will lights up, the buzzer will turn on for 2 seconds, and the propeller will turn on
-  3. If the data doesnt pass the threshold, the yellow LED will light up indicate it's a safe environment.
-  4. However, the propeller can also be turned off by pressing on the button implemented in the system.
-  5. 5-minute interval will be used during dangerous environment and 15-minute interval will be used during safe environment. 
+  4. If the data doesnt pass the threshold, the yellow LED will light up indicate it's a safe environment.
+  5. However, the propeller can also be turned off by pressing on the button implemented in the system.
+  6. 5-minute interval will be used during dangerous environment and 15-minute interval will be used during safe environment. 
