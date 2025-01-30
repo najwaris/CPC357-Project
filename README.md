@@ -36,6 +36,8 @@ The actuators used in this system are:
 
 ## The alert implemented
   1. Real-time alerts:
+
      a. LED, buzzer, shaft motor with propeller
-  2. Alert after process by the cloud:
+  3. Alert after process by the cloud:
+
      a. email notifications based on the threshold 
