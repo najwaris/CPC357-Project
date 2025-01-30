@@ -32,4 +32,10 @@ The actuators used in this system are:
      b. the other threshold: red LED will lights up, the buzzer will turn on for 2 seconds, and the propeller will turn on
   4. If the data doesnt pass the threshold, the yellow LED will light up indicate it's a safe environment.
   5. However, the propeller can also be turned off by pressing on the button implemented in the system.
-  6. 5-minute interval will be used during dangerous environment and 15-minute interval will be used during safe environment. 
+  6. 5-minute interval will be used during dangerous environment and 15-minute interval will be used during safe environment.
+
+## The alert implemented
+  1. Real-time alerts:
+     a. LED, buzzer, shaft motor with propeller
+  2. Alert after process by the cloud:
+     a. email notifications based on the threshold 
